@@ -19,27 +19,10 @@ Seeks the same goals as the original script, with some differences:
 - Tabs replaced with spaces ;)
 
 
-**Installation:**
-```
-git clone https://github.com/lobuhi/byp4xx.git
-cd byp4xx
-chmod u+x byp4xx.py
-./byp4xx.py
-or
-python3 byp4xx.py
-```
-
 **Usage:** Start URL with http or https.
 ```
 python3 byp4xx.py <cURL options> <target>
 
-Some cURL options you may use as example:
-  -L follow redirections (30X responses)
-  -x <ip>:<port> to set a proxy
-  -m <seconds> to set a timeout
-  -H for new headers
-  -d for data in the POST requests body
-  -...
 ```
 **Example:**
 ```
@@ -49,10 +32,7 @@ python3 byp4xx.py https://www.google.es/test
 - Multiple HTTP verbs/methods
 - Multiple methods mentioned in #bugbountytips
 - Multiple headers: Referer, X-Custom-IP-Authorization...
-- Accepts any cURL option
-- New module, test for 2454 UserAgents from SecList
+- Test for 2454 UserAgents from SecList
 
 **Tips:**
 - You can add proxychains to use with BurpSuite
-- Interlace is a good option for multithreading multiples URLs
-- BONUS: **[Buy me a coffee... or a pizza! Stay cool! ^_^](https://buymeacoffee.com/lobuhi)**
