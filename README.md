@@ -9,6 +9,16 @@
 ```
 Python script for 40X responses bypassing. Methods from #bugbountytips, headers, verb tampering and user agents.
 
+Based on the original script by Lobuhi: https://github.com/lobuhi/byp4xx.git
+
+Seeks the same goals as the original script, with some differences:
+
+- Replacing the use of `curl` with python requests for cross-platform use
+- Verbose options to print successful requests and responses
+- Use of proxy options with Python to support proxying to Burp without using e.g. proxychains
+- Tabs replaced with spaces ;)
+
+
 **Installation:**
 ```
 git clone https://github.com/lobuhi/byp4xx.git
