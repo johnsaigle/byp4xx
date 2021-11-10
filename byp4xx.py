@@ -22,7 +22,7 @@ def banner():
 	print('by: @lobuhisec \033[0m')
 	print('')
 
-def do_request(url, verb='GET', headers={}, payload=''):
+def do_request(url, verb='HEAD', headers={}, payload=''):
 	"""Performs the request to the server via requests.
 	Global variables are used to access data populated by command-line flags.
 	"""
@@ -169,10 +169,14 @@ def main():
 	betweens = [
 		'/.',
 		'/.;',
-		'/;foo=bar;'
+		';foo=bar;'
 	]
 	for between in betweens:
-		print(f"Between {between}: {do_request(url=(base + between + endpoint))}")
+		try: 
+			print(f"Between {between}: ", end='')
+			print(do_request(url=(base + between + endpoint)))
+		except Exception as e:
+			print(f"None")
 	#payload=url+"/%2e/"+uri
 	#print("%2e: ",curl_code_response(options+" -X GET",payload))
 	#payload=url+"/"+uri+"/."
